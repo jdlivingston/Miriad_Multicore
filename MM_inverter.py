@@ -101,15 +101,13 @@ def grid_images(t):
             stokes_str = ','.join(stokespars)
             cmd = f'invert vis={var_strs} map={maps} beam={beam} line={chan_str} imsize={field},{field} cell=1,1 robust=+0.6 stokes={stokes_str} options=double,mfs'
             print(cmd)
-            #args=shlex.split(cmd)
-            #p=subprocess.Popen(args, stdout=subprocess.PIPE)
+            args=shlex.split(cmd)
+            p=subprocess.Popen(args, stdout=subprocess.PIPE)
             
     # Print the output
-            #for line in p.stdout:
-            #   print(line)
-            #p.wait()
-
-#grid_images(core)
+            for line in p.stdout:
+               print(line)
+            p.wait()
             
 #Makes list of processors
 pool = Pool(processes=core)
