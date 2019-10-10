@@ -30,7 +30,7 @@ def inputs(argv):
         opts, args = getopt.getopt(argv,"hcf:s:1:2:d:i:r:n:",["freq=","source=","start_chan=",
                                                           "end_chan=","step_size=","n_iters=",
                                                             "region=",
-                                                          ,"core_num="])
+                                                          "core_num="])
         print(opts,args)
     except getopt.GetoptError:
         print('input error, check format of input parameters')
@@ -78,7 +78,7 @@ def get_noise(source,freq,chan):
     maps = f'{source}.{freq}.{chan}.{stokes}.map'
     if os.path.isdir(maps):
         fitsfile = f'{maps}.fits'
-        cmd = f'fits in={maps} out={fitsfile} op=xyout ' % (map,fitsfile)
+        cmd = f'fits in={maps} out={fitsfile} op=xyout '
         print(cmd)
         args=shlex.split(cmd)
         p=subprocess.Popen(args, stdout=subprocess.PIPE)
@@ -95,23 +95,23 @@ def get_noise(source,freq,chan):
     return noise
 
 # Get the inputs before calling next function
-freq,source,schan,echan,step,nit,core=inputs(sys.argv[1:])
+freq,source,schan,echan,step,nit,region,core=inputs(sys.argv[1:])
 
 def clean_images(t):
     stokespars = ['i','q','u','v']
     # Cycle over the channels
-    start=1+int((echan-schan)/core)*t
-    end=int((echan-schan)/core)*(t+1)
+    start=schan+int((echan-schan)/core)*t
+    end=schan+int((echan-schan)/core)*(t+1)
     
     for chan in range(start,end,step):
-        cut_noise= get_noise(source,freq,chan)
+        cut_noise = get_noise(source,freq,chan)
  
         for stokes in stokespars: 
             mod = f'{source}.{freq}.{chan:04d}.{stokes}.mod' 
             cln = f'{source}.{freq}.{chan:04d}.{stokes}.cln' 
             pbcorr = f'{source}.{freq}.{chan:04d}.{stokes}.pbcorr' 
             maps = f'{source}.{freq}.{chan:04d}.{stokes}.map' 
-            beam = f'{source}.{freq}.{chan:04d}.{stokes}am'
+            beam = f'{source}.{freq}.{chan:04d}.beam'
             rms = f'{source}.{freq}.{chan:04d}.{stokes}.rms' 
             outfile = f'{source}.{freq}.{chan:04d}.{stokes}.cln.fits' 
             
@@ -126,75 +126,58 @@ def clean_images(t):
                 p=subprocess.Popen(args, stdout=subprocess.PIPE)
         # Print the output
                 for line in p.stdout:
-                    print(line)
+                     print(line)
                 p.wait()
-        # Restor the images
-                cmd =f'restor map={maps} beam={beam} model={mod} out={pbcorr}'
+         # Restor the images
+                cmd = f'restor map={maps} beam={beam} model={mod} out={pbcorr}'
                 print(cmd)
                 args=shlex.split(cmd)
                 p=subprocess.Popen(args, stdout=subprocess.PIPE)     
-        #Print the output
+#         #Print the output
                 for line in p.stdout:
-                    print(line)
+                     print(line)
                 p.wait()  
                 
-        # Primary Beam Correction
-                cmd =f'linmos in={pbcorr} out={cln}'
+#         # Primary Beam Correction
+                cmd = f'linmos in={pbcorr} out={cln}'
                 print(cmd)
                 args=shlex.split(cmd)
                 p=subprocess.Popen(args, stdout=subprocess.PIPE)     
-        #Print the output
+#         #Print the output
                 for line in p.stdout:
-                    print(line)
+                      print(line)      
                 p.wait() 
                 
-        # Copy missing RMS after primary beam correction 
-                cmd =f'gethd in={pbcorr}/rms log={rms}'
+#         # Copy missing RMS after primary beam correction 
+                cmd = f'gethd in={pbcorr}/rms log={rms}'
                 print(cmd)
                 args=shlex.split(cmd)
                 p=subprocess.Popen(args, stdout=subprocess.PIPE)     
-        #Print the output
+#         #Print the output
                 for line in p.stdout:
-                    print(line)
+                      print(line)
                 p.wait()  
                 
-        # Paste missing RMS onto primary beam correction
-                cmd =f'puthd in={cln}/rms value=@{rms}'
+#         # Paste missing RMS onto primary beam correction
+                cmd = f'puthd in={cln}/rms value=@{rms}'
                 print(cmd)
                 args=shlex.split(cmd)
                 p=subprocess.Popen(args, stdout=subprocess.PIPE)     
-        #Print the output
+#         #Print the output
                 for line in p.stdout:
-                    print(line)
+                      print(line)
                 p.wait()
                 
-        #convert to fits
+#         #convert to fits
                 cmd =f'fits in={cln} out={outfile} op=xyout'
                 print(cmd)
                 args=shlex.split(cmd)  # Splits the cmd into a string for subprocess
                 p=subprocess.Popen(args, stdout=subprocess.PIPE)
-                    # Print the output
+          # Print the output
                 for line in p.stdout:
-                    print(line)
+                      print(line)
                 p.wait()
                 
-        #delete dirty maps, beams, uncorrected clean images, and models 
-                try:
-                    shutil.rmtree(maps)
-                except OSError:
-                    print(f"Unable to remove file {maps}")
-                try:
-                    shutil.rmtree(pbcorr)
-                except OSError:
-                    print(f"Unable to remove file {pbcorr}")
-                try:
-                    shutil.rmtree(beam)
-                except OSError:
-                    print(f"Unable to remove file {beam}")
-                try:
-                    shutil.rmtree(mod)
-                except OSError:
-                    print(f"Unable to remove file {mod}")
     return
 
 #Makes list of processors
