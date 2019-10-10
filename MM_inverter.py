@@ -87,8 +87,8 @@ def grid_images(t):
     print(f'Loading in {var_strs}')
     
     # Cycle over the channels which are split for multicore
-    start=1+int((echan-schan)/core)*t
-    end=int((echan-schan)/core)*(t+1)
+    start=schan+int((echan-schan)/core)*t
+    end=schan+int((echan-schan)/core)*(t+1)
     
     for chan in range(start,end,step):
         im,qm,um,vm = [f'{source}.{freq}.{chan:04d}.{a}.map' for a in stokespars] 
