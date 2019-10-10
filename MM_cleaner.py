@@ -100,7 +100,7 @@ freq,source,schan,echan,step,nit,core=inputs(sys.argv[1:])
 def clean_images(t):
     stokespars = ['i','q','u','v']
     # Cycle over the channels
-    start=1+int((schan-echan)/core)*t
+    start=1+int((echan-schan)/core)*t
     end=int((echan-schan)/core)*(t+1)
     
     for chan in range(start,end,step):
@@ -201,3 +201,6 @@ def clean_images(t):
 pool = Pool(processes=core)
 #Runs each chunk of freq on new processor 
 pool.map(clean_images, list(range(0,core,1)))
+
+# Clean the images
+#clean_images(source,freq,schan,echan)
