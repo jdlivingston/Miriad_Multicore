@@ -80,14 +80,14 @@ def grid_images(t):
     for each channel band produces dirty maps (.map) for each Stokes parameter and beam images
     '''
     #Get all uvaver files
-    uvaver_locations=glob.glob(f'../*/*/{source}*.uvaver') #!only works for where my files are stored!
+    uvaver_locations=glob.glob(f'../../*/*/{source}*.uvaver') #!only works for where my files are stored!
     var_strs=','.join(uvaver_locations)
     # make images for all sources in a directory
     stokespars = ['i','q','u','v']
     print(f'Loading in {var_strs}')
     
     # Cycle over the channels which are split for multicore
-    start=1+int((schan-echan)/core)*t
+    start=1+int((echan-schan)/core)*t
     end=int((echan-schan)/core)*(t+1)
     
     for chan in range(start,end,step):
