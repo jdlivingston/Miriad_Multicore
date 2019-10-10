@@ -12,16 +12,15 @@ from multiprocessing import Pool
 
 def inputs(argv):
     '''
-    Takes inputs from command line.
-    
-    Inputs:
-    -f <freq> = centre frequency in MHz
-    -s <source> = source name in RA-DEC convention from miriad
-    -1 <start_chan> = starting channel number
-    -2 <end_chan> = final channel number
-    -d <step_size> = channel step_size for images
-    -n <core_num> = number of cores to run task on
-    
+    Takes inputs from command line. 
+            Inputs:
+            -f <freq> = centre frequency in MHz
+            -s <source> = source name in RA-DEC convention from miriad
+            -1 <start_chan> = starting channel number
+            -2 <end_chan> = final channel number
+            -d <step_size> = channel step_size for images
+            -b <field_size> = size of field in pixels 
+            -n <core_num> = number of cores to run task on
     '''
     freq = ''
     mfs = False
@@ -36,7 +35,8 @@ def inputs(argv):
         sys.exit(2)
     for opt, arg in opts:
         if opt == '-h':
-            print('''Takes inputs from command line. 
+            print('''
+            Takes inputs from command line. 
             Inputs:
             -f <freq> = centre frequency in MHz
             -s <source> = source name in RA-DEC convention from miriad
@@ -44,7 +44,8 @@ def inputs(argv):
             -2 <end_chan> = final channel number
             -d <step_size> = channel step_size for images
             -b <field_size> = size of field in pixels 
-            -n <core_num> = number of cores to run task on''')
+            -n <core_num> = number of cores to run task on
+            ''')
             sys.exit()
         elif opt in ("-f", "--freq"):
             freq = arg
