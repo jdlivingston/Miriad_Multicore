@@ -10,8 +10,6 @@ from multiprocessing import Pool
 # Modified from RC polarimetry script from 10 August 2016 and N. McClure-Griffiths 10 Dec 2018
 # WORKS FOR PYTHON 3
 
-
-
 def get_noise(source,freq,chan):
     from astropy.io import fits
     import numpy as np
@@ -38,7 +36,7 @@ def get_noise(source,freq,chan):
 
 
 def clean_images(args):
-    chan, step_size = args
+    chan, source, freq, region, nit = args
     stokespars = ['i','q','u','v']
     # Cycle over the channels
 
@@ -123,7 +121,7 @@ def clean_images(args):
 
 def main(pool, args):
 
-    inputs = [[i, args.step_size] for i in range(args.start_chan, args.end_chan, args.step_size)]
+    inputs = [[i, args.source, args.freq, args.region, args.n_iters] for i in range(args.start_chan, args.end_chan, args.step_size)]
 
     #Runs each chunk of freq on new processor
     pool.map(clean_images, inputs)
