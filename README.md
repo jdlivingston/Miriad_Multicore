@@ -1,4 +1,4 @@
-# Miriad_Multicore
+# Miriad_Multicore :frog:
 
 * This repo uses python to image and clean miriad maps using mutliple cores. 
 * MM_inverter.py takes command line inputs and uses miriad *invert* on uvaver files from miriad. 
