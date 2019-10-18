@@ -75,7 +75,7 @@ if __name__ == "__main__":
     # Parse the command line options
     parser = argparse.ArgumentParser(description=descStr,
                                      formatter_class=argparse.RawTextHelpFormatter)
-    parser.add_argument("source", metavar="source", nargs=1,
+    parser.add_argument("-s", dest="source",
                         type=str, help="Source name in RA-DEC convention from miriad")
 
     parser.add_argument("-f", dest="freq", type=int, default=2100,
