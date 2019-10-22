@@ -136,8 +136,8 @@ if __name__ == "__main__":
 
     # Help string to be shown using the -h option
     descStr = """
-    TO-DO
-
+    Takes dirty maps produced using MM_inverter.py and uses miriad clean, linmos, 
+    and restor to generate beam corrected clean images.
     """
 
     # Parse the command line options
