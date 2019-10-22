@@ -11,6 +11,15 @@ from multiprocessing import Pool
 # WORKS FOR PYTHON 3
 
 def get_noise(source,freq,chan):
+    '''
+    Generates noise cutoff from stokes v image to use for cleaning
+    
+    Auto Inputs:
+    args = source,freq,chan
+    
+    Outputs:
+    float that will be used as cutoff for cleaning process
+    '''
     from astropy.io import fits
     import numpy as np
     noise=-100.0
@@ -36,13 +45,23 @@ def get_noise(source,freq,chan):
 
 
 def clean_images(args):
+    '''
+    Takes inputs and runs miriad invert from command line producing dirty maps and beams
+    
+    User Inputs:
+    args = chan, source, freq, region, nit
+    
+    Outputs:
+    cleans dirty maps and produces fits images for each stokes parameter
+    '''
     chan, source, freq, region, nit = args
     stokespars = ['i','q','u','v']
     # Cycle over the channels
 
-
+    # Gets noise for clean cutoff from stokes v
     cut_noise = get_noise(source,freq,chan)
 
+    # Create names for files
     for stokes in stokespars:
         mod = f'{source}.{freq}.{chan:04d}.{stokes}.mod'
         cln = f'{source}.{freq}.{chan:04d}.{stokes}.cln'
@@ -56,7 +75,7 @@ def clean_images(args):
         if not os.path.isdir(maps) and not os.path.isdir(beam):
             print(f"Map {maps} does not exist")
         else:
-    # Run through first clean of central source
+    # Run through clean
             cmd = f'clean map={maps} beam={beam} region=percentage({region}) niters={nit} cutoff={cut_noise} out={mod}'
             print(cmd)
             args=shlex.split(cmd)  # Splits the cmd into a string for subprocess
