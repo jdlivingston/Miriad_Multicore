@@ -11,6 +11,15 @@ import glob
 
 
 def clean_images(args):
+    '''
+    Cleans mfs dirty map generated from MM_single_inverter.py and converts to fits file
+    
+    User Inputs:
+    args = source, freq, region, nit
+    
+    Outputs:
+    cleans mfs dirty map and produces fits image for each stokes parameter
+    '''
     source, freq, region, nit = args
     stokespars = ['i','q','u','v']
     # Cycle over the channels
