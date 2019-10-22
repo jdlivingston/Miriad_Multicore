@@ -15,10 +15,7 @@ def grid_images(args):
     Takes inputs and runs miriad invert from command line producing dirty maps and beams
     
     User Inputs:
-    t = core index
-    
-    Other Inputs:
-    outputs from inputs function above
+    args = chan, step, source, freq, field
     
     Outputs:
     for each channel band produces dirty maps (.map) for each Stokes parameter and beam images
@@ -30,12 +27,10 @@ def grid_images(args):
     # make images for all sources in a directory
     stokespars = ['i','q','u','v']
     print(f'Loading in {var_strs}')
-    
-    # Cycle over the channels which are split for multicore
    
-    im,qm,um,vm = [f'{source}.{freq}.{chan:04d}.{a}.map' for a in stokespars] 
-    beam = f'{source}.{freq}.{chan:04d}.beam'
-    maps=','.join([im,qm,um,vm])
+    im,qm,um,vm = [f'{source}.{freq}.{chan:04d}.{a}.map' for a in stokespars]  #creates stokes names
+    beam = f'{source}.{freq}.{chan:04d}.beam' #creates beam names
+    maps=','.join([im,qm,um,vm]) #create dirty map names
 
     #Check if the maps have already been created
     if not os.path.isdir(im) and not os.path.isdir(beam):
@@ -113,6 +108,6 @@ if __name__ == "__main__":
             sys.exit(0)
 
 
-    # Clean the images
+    # Makes the iamges
     main(pool, args)
 
