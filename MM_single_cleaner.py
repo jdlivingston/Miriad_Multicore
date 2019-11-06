@@ -41,7 +41,7 @@ def clean_images(args):
         p.wait()
         # Restor the images
         cmd = f'restor map={maps} beam={beam} model={mod} out={cln}'
-        print cmd
+        print(cmd)
         args=shlex.split(cmd)
         p=subprocess.Popen(args, stdout=subprocess.PIPE)
         for line in p.stdout:
