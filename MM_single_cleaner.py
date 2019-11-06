@@ -29,7 +29,7 @@ def clean_images(args):
         cln = f'{source}.{freq}.{stokes}.cln'
         maps = f'{source}.{freq}.{stokes}.map'
         beam = f'{source}.{freq}.beam' 
-        fits = f'{source}.{freq}.single.fits'
+        fits = f'{source}.{freq}.{stokes}.single.fits'
         # Run through first clean of central source
         cmd = f'mfclean map={maps} beam={beam} region=percentage({region}) niters={nit} cutoff={cut_noise} out={mod}'
         print(cmd)
