@@ -39,13 +39,13 @@ def grid_images(args):
     # Do the imaging
             stokes_str = ','.join(stokespars)
             cmd =f'invert vis={var_strs} map={maps} beam={beam} imsize={field},{field} cell=1,1 robust=+0.6 stokes={stokes_str} options=double,sdb,mfs'
-            print cmd
+            print(cmd)
             args=shlex.split(cmd)
             p=subprocess.Popen(args, stdout=subprocess.PIPE)
             
     # Print the output
             for line in p.stdout:
-               print line
+               print(line)
             p.wait()
     return
 
