@@ -51,7 +51,7 @@ def grid_images(args):
 
 def main(args):
 
-    inputs = [args.source, args.freq, args.field]
+    inputs = [args.source, args.freq, args.field_size]
 
     #Runs each chunk of freq on new processor
     grid_images(inputs)
