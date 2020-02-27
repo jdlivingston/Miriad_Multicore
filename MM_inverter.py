@@ -3,6 +3,7 @@ import subprocess,shlex,shutil
 import sys,getopt
 import glob
 from multiprocessing import Pool
+import tqdm
 
 # Miriad Multicore Inverter
 # Work through making images from .uvaver miriad files
@@ -22,11 +23,11 @@ def grid_images(args):
     '''
     chan, step, source, freq, field = args
     #Get all uvaver files
-    uvaver_locations=glob.glob(f'../../*/*/{source}*.uvaver') #!only works for where my files are stored!
+    uvaver_locations=glob.glob(f'../*/*{source}*.uvaver') #!only works for where my files are stored!
     var_strs=','.join(uvaver_locations)
     # make images for all sources in a directory
     stokespars = ['i','q','u','v']
-    print(f'Loading in {var_strs}')
+    #print(f'Loading in {var_strs}')
    
     im,qm,um,vm = [f'{source}.{freq}.{chan:04d}.{a}.map' for a in stokespars]  #creates stokes names
     beam = f'{source}.{freq}.{chan:04d}.beam' #creates beam names
@@ -37,24 +38,26 @@ def grid_images(args):
     # Do the imaging
         chan_str = f'chan,{step},{chan}'
         stokes_str = ','.join(stokespars)
-        cmd = f'invert vis={var_strs} map={maps} beam={beam} line={chan_str} imsize={field},{field} cell=1,1 robust=+0.6 stokes={stokes_str} options=double,mfs'
-        print(cmd)
+        cmd = f'invert vis={var_strs} map={maps} beam={beam} line={chan_str} imsize={field},{field} cell=1,1 robust=+0.6 stokes={stokes_str} options=mfs'
+        #print(cmd)
         args=shlex.split(cmd)
-        p=subprocess.Popen(args, stdout=subprocess.PIPE)
-            
+        with open('error_inv.log','a') as log:
+            p=subprocess.Popen(args, stdout=subprocess.DEVNULL, stderr=log)
     # Print the output
-        for line in p.stdout:
-           print(line)
-        p.wait()
+        #print(p.stdout.read())
+        #for line in p.stdout:
+        #   print(line)
+            p.wait()
             
 def main(pool, args):
 
     inputs = [[i, args.step_size, args.source, args.freq, args.field_size] for i in range(args.start_chan, args.end_chan, args.step_size)]
 
+    print('Creating Images')
     #Runs each chunk of freq on new processor
-    pool.map(grid_images, inputs)
+    for _ in tqdm.tqdm(pool.imap(grid_images, inputs),total=len(inputs)):
+        pass
     pool.close()
-    print('Done')
 
 
 if __name__ == "__main__":
@@ -110,4 +113,3 @@ if __name__ == "__main__":
 
     # Makes the iamges
     main(pool, args)
-
